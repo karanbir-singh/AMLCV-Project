@@ -58,8 +58,6 @@ echo "=================================================="
 echo "RUNNING EVALUATION 2: Object Consist., Brightness, LPIPS"
 echo "=================================================="
 
-# Assumes you saved the Paired Metrics code I gave you as 'eval_paired.py'
-python eval_paired.py > "logs/paired_results_${SLURM_JOB_ID}.log" 2>&1
 
 echo "Paired Metrics Run Finished. Check logs/paired_results_${SLURM_JOB_ID}.log"
 
