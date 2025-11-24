@@ -20,6 +20,8 @@ module load Python/3.11.3-GCCcore-12.3.0
 # 2. ACTIVATE YOUR PERSISTENT ENVIRONMENT
 source venv/bin/activate
 
+pip install cv2
+
 echo "Start Time: $(date)"
 
 echo "=================================================="
