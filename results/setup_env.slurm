@@ -46,6 +46,8 @@ python -m pip install \
     matplotlib \
     seaborn
 
+python -m pip install "numpy<2.0"
+
 # 5. VERIFY INSTALLATION
 echo "=================================================="
 echo "VERIFYING INSTALLATION"
