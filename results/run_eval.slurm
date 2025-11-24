@@ -14,10 +14,16 @@
 # ------------------------------------------------------------
 module purge
 module load CUDA/12.1.1 # Load CUDA drivers
-module load python/3.11 # Load a clean, recent Python environment
+module load Python/3.11.3-GCCcore-12.3.0 # Load a clean, recent Python environment
+
+# Verify python loaded correctly
+if ! command -v python &> /dev/null; then
+    echo "CRITICAL ERROR: Python module failed to load."
+    exit 1
+fi
+echo "Python loaded: $(which python)"
 
 # 2. CREATE AND ACTIVATE VIRTUAL ENVIRONMENT
-# We create this in $TMPDIR to ensure it cleans up automatically and is fast on local storage
 VENV_PATH=$TMPDIR/my_eval_env
 echo "Creating isolated environment at $VENV_PATH"
 
@@ -80,8 +86,7 @@ echo "STARTING EVALUATION"
 echo "=================================================="
 
 # Run your script using the environment's python executable
-$VENV_PATH/bin/python /home/algh/AMLCV-Project/results/eval_unpaired.py > "logs/unpaired_results_${SLURM_JOBID}.log" 2>&1
-
+python /home/algh/AMLCV-Project/results/eval_unpaired.py > "logs/unpaired_results_${SLURM_JOB_ID}.log" 2>&1
 EXIT_CODE=$?
 
 # 6. CLEANUP AND FINAL STATUS
