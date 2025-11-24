@@ -14,7 +14,7 @@ echo "=================================================="
 # 1. Load Modules - Use the SAME Python that PyTorch module uses
 module purge
 module load CUDA/12.1.1
-module load Python/3.11.3-foss-2023a  # This matches PyTorch/2.1.2-foss-2023a
+module load Python/3.11.3-GCCcore-12.3.0 # This matches PyTorch/2.1.2-foss-2023a
 
 # 2. Create Persistent Environment
 echo "Creating virtual environment in $(pwd)/venv"
