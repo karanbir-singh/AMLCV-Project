@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --job-name=Setup_Env
-#SBATCH --output=setup_env.log
+#SBATCH --output=logs/setup_env_${SLURM_JOB_ID}.log
 #SBATCH --cpus-per-task=4
 #SBATCH --gres=gpu=1
-#SBATCH --time=01:00:00
+#SBATCH --time=06:00:00
 #SBATCH --mem=16G
 #SBATCH --partition=acltr
 

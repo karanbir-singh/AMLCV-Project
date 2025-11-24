@@ -6,7 +6,7 @@
 #SBATCH --nodes=1
 #SBATCH --gres=gpu=1
 #SBATCH --partition=acltr
-#SBATCH --time=5:00:00
+#SBATCH --time=24:00:00
 #SBATCH --mem=32G
 
 # ------------------------------------------------------------
@@ -14,9 +14,11 @@
 # ------------------------------------------------------------
 module purge
 module load CUDA/12.1.1
+module load Python/3.11.3-GCCcore-12.3.0
+
 
 # 2. ACTIVATE YOUR PERSISTENT ENVIRONMENT
-source /home/algh/AMLCV-Project/venv/bin/activate
+source venv/bin/activate
 
 # 3. VERIFY ENVIRONMENT
 echo "Using Python: $(which python)"
@@ -29,8 +31,6 @@ echo "Start Time: $(date)"
 echo "=================================================="
 echo "STARTING EVALUATION"
 echo "=================================================="
-
-cd /home/algh/AMLCV-Project/results
 python eval_unpaired.py > "./logs/eval_results_${SLURM_JOB_ID}.log" 2>&1
 
 
