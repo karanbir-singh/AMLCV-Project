@@ -9,8 +9,6 @@ import os
 # Folder containing your CycleGAN output (Generated Night images)
 GEN_FOLDER = './path/to/generated_night'
 
-# Folder containing REAL night images (Reference for FID)
-# If you don't have this, FID is meaningless.
 REF_FOLDER = './path/to/real_night_dataset'
 
 

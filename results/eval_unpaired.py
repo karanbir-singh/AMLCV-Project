@@ -11,8 +11,8 @@ from torchvision import transforms
 from skimage.metrics import structural_similarity as ssim
 
 # --- CONFIGURATION ---
-DAY_PATH = './path/to/input_day'
-NIGHT_PATH = './path/to/generated_night'
+DAY_PATH = 'flat_reference_input'
+NIGHT_PATH = 'flat_generated_output'
 OUTPUT_CSV = 'evaluation_results.csv'
 SUMMARY_CSV = 'summary_stats.csv'
 
