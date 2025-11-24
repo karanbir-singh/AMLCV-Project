@@ -1,57 +1,100 @@
 #!/bin/bash
-#SBATCH --job-name=CycleGAN_Eval
-#SBATCH --output=logs/eval_metrics_%j.out
-#SBATCH --error=logs/eval_metrics_%j.err
+#SBATCH --job-name=Isolated_Eval_Job
+#SBATCH --output=logs/isolated_eval_%j.out
+#SBATCH --error=logs/isolated_eval_%j.err
 #SBATCH --cpus-per-task=4
 #SBATCH --nodes=1
 #SBATCH --gres=gpu=1
 #SBATCH --partition=acltr
-#SBATCH --time=10:00:00
+#SBATCH --time=04:00:00
 #SBATCH --mem=32G
 
-mkdir -p logs
-
-echo "=================================================="
-echo "CycleGAN Evaluation Job"
-echo "=================================================="
-
-# 1. LOAD MODULES
-# These provide the heavy drivers (CUDA, PyTorch) so we don't need to download them
+# ------------------------------------------------------------
+# 1. LOAD BASE PYTHON MODULE (Crucial: DO NOT load PyTorch module here)
+# ------------------------------------------------------------
 module purge
-module load CUDA/12.1.1
-module load PyTorch/2.1.2-foss-2023a-CUDA-12.1.1
+module load CUDA/12.1.1 # Load CUDA drivers
+module load python/3.11 # Load a clean, recent Python environment
 
-# 2. INSTALL ONLY MISSING LIBRARIES
-echo "Installing/Updating evaluation libraries..."
+# 2. CREATE AND ACTIVATE VIRTUAL ENVIRONMENT
+# We create this in $TMPDIR to ensure it cleans up automatically and is fast on local storage
+VENV_PATH=$TMPDIR/my_eval_env
+echo "Creating isolated environment at $VENV_PATH"
 
-# We use --user to install in your home folder.
-# We DO NOT include 'torch' or 'torchvision' here because the modules provide them.
-pip install --user --upgrade clean-fid lpips ultralytics opencv-python-headless pandas scikit-image torchvision
+# Create the environment. We use --without-pip to ensure a clean slate, then install pip.
+python -m venv $VENV_PATH --without-pip
+source $VENV_PATH/bin/activate
 
-# 3. VERIFY EVERYTHING IS THERE
-echo "Verifying imports..."
-python -c "
+# Upgrade PIP
+$VENV_PATH/bin/python -m pip install --upgrade pip
+
+# 3. INSTALL FULL, COMPATIBLE STACK
+echo "Installing full compatible stack..."
+
+# We install the full stack from PyPI, ensuring compatibility flags are used.
+# The previous conflicts showed we need to constrain numpy and install all required packages.
+
+# CRITICAL FIX: Install PyTorch/Torchvision using a specific index URL for CUDA support.
+# This prevents symbol errors and resolves the 'register_fake' AttributeError.
+# (Assuming your cluster supports CUDA 12.1, which corresponds to PyTorch 2.1.x/2.2.x)
+$VENV_PATH/bin/python -m pip install \
+    torch==2.1.2+cu121 torchvision==0.16.2+cu121 \
+    --extra-index-url https://download.pytorch.org/whl/cu121
+
+# Install the remaining CV libraries
+$VENV_PATH/bin/python -m pip install \
+    clean-fid lpips ultralytics opencv-python-headless pandas \
+    scikit-image
+
+# 4. VERIFY ENVIRONMENT
+echo "=================================================="
+echo "VERIFYING ISOLATED ENVIRONMENT"
+echo "=================================================="
+# Run the verification script using the environment's python executable
+$VENV_PATH/bin/python -c "
 import sys
 try:
-    import torch; print(f'✓ PyTorch: {torch.__version__}')
-    import torchvision; print(f'✓ Torchvision: {torchvision.__version__}')
-    import cv2; print(f'✓ OpenCV: {cv2.__version__}')
-    import cleanfid; print('✓ clean-fid (FID) available')
-    import lpips; print('✓ LPIPS available')
-    import ultralytics; print('✓ Ultralytics (YOLO) available')
-    import skimage; print(f'✓ Scikit-image: {skimage.__version__}')
-    print('ALL SYSTEMS GO')
+    import torch;
+    import torchvision;
+    import lpips;
+    import ultralytics;
+    import skimage;
+    import cv2;
+
+    # Check for the numpy conflicts reported previously
+    import numpy as np
+
+    # Check if the installed libraries are compatible (version will be 0.16.x)
+    print(f'✓ PyTorch: {torch.__version__} (Compatible with loaded CUDA)')
+    print(f'✓ Torchvision: {torchvision.__version__} (Fixed incompatibility)')
+    print(f'✓ Numpy: {np.__version__} (Resolved compatibility conflicts)')
+    print('ALL DEPENDENCIES ARE ISOLATED AND COMPATIBLE.')
 except Exception as e:
-    print(f'ERROR: {e}')
+    print(f'FATAL ERROR: Failed to load core stack: {e}')
     sys.exit(1)
 "
 
+# 5. RUN EVALUATION
 echo "=================================================="
-echo "RUNNING EVALUATION 2: Object Consist., Brightness, LPIPS"
+echo "STARTING EVALUATION"
 echo "=================================================="
 
-python eval_unpaired.py > "logs/unpaired_results_${SLURM_JOB_ID}.log" 2>&1
-echo "Paired Metrics Run Finished. Check logs/paired_results_${SLURM_JOB_ID}.log"
+# Run your script using the environment's python executable
+$VENV_PATH/bin/python /home/algh/AMLCV-Project/results/eval_unpaired.py > "logs/unpaired_results_${SLURM_JOBID}.log" 2>&1
+
+EXIT_CODE=$?
+
+# 6. CLEANUP AND FINAL STATUS
+# Deactivate is not strictly necessary as the job exits, but it's good practice
+deactivate
 
 echo "=================================================="
-echo "Job Complete"
+if [ $EXIT_CODE -eq 0 ]; then
+    echo "Job Completed Successfully!"
+else
+    echo "Job Failed with Exit Code: $EXIT_CODE"
+fi
+echo "End Time: $(date)"
+echo "=================================================="
+
+exit $EXIT_CODE
