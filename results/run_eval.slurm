@@ -6,7 +6,7 @@
 #SBATCH --nodes=1
 #SBATCH --gres=gpu=1
 #SBATCH --partition=acltr
-#SBATCH --time=04:00:00
+#SBATCH --time=10:00:00
 #SBATCH --mem=32G
 
 mkdir -p logs
@@ -26,7 +26,7 @@ echo "Installing/Updating evaluation libraries..."
 
 # We use --user to install in your home folder.
 # We DO NOT include 'torch' or 'torchvision' here because the modules provide them.
-pip install --user --upgrade clean-fid lpips ultralytics opencv-python-headless pandas
+pip install --user --upgrade clean-fid lpips ultralytics opencv-python-headless pandas scikit-image torchvision
 
 # 3. VERIFY EVERYTHING IS THERE
 echo "Verifying imports..."
@@ -39,10 +39,11 @@ try:
     import cleanfid; print('✓ clean-fid (FID) available')
     import lpips; print('✓ LPIPS available')
     import ultralytics; print('✓ Ultralytics (YOLO) available')
+    import skimage; print(f'✓ Scikit-image: {skimage.__version__}')
     print('ALL SYSTEMS GO')
 except Exception as e:
     print(f'ERROR: {e}')
-    # We do NOT exit here, we try to run anyway just in case
+    sys.exit(1)
 "
 
 echo "=================================================="
