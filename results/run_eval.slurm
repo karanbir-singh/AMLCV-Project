@@ -20,12 +20,6 @@ module load Python/3.11.3-GCCcore-12.3.0
 # 2. ACTIVATE YOUR PERSISTENT ENVIRONMENT
 source venv/bin/activate
 
-# 3. VERIFY ENVIRONMENT
-echo "Using Python: $(which python)"
-python -c "import torch; print(f'PyTorch: {torch.__version__}, CUDA: {torch.cuda.is_available()}')"
-
-# 5. RUN EVALUATION
-
 echo "Start Time: $(date)"
 
 echo "=================================================="

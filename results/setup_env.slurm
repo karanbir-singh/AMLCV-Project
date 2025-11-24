@@ -8,47 +8,52 @@
 #SBATCH --partition=acltr
 
 echo "=================================================="
-echo "CREATING PERSISTENT VIRTUAL ENVIRONMENT"
+echo "CREATING COMPATIBLE VIRTUAL ENVIRONMENT"
 echo "=================================================="
 
-# 1. Load Modules - Use the SAME Python that PyTorch module uses
+# 1. Clean start - remove existing environment
+if [ -d "venv" ]; then
+    echo "Removing existing virtual environment..."
+    rm -rf venv
+fi
+
+# 2. Load Modules
 module purge
 module load CUDA/12.1.1
-module load Python/3.11.3-GCCcore-12.3.0 # This matches PyTorch/2.1.2-foss-2023a
+module load Python/3.11.3-GCCcore-12.3.0
 
-# 2. Create Persistent Environment
-echo "Creating virtual environment in $(pwd)/venv"
+# 3. Create fresh environment
+echo "Creating new virtual environment..."
 python -m venv venv
-
-# 3. Activate and Upgrade pip
 source venv/bin/activate
-python -m pip install --upgrade pip
 
-# 4. Install Libraries with Compatible Versions
-echo "Installing libraries with compatible versions..."
+# 4. Upgrade pip and setuptools first
+python -m pip install --upgrade pip setuptools wheel
 
-# Install PyTorch with CUDA 12.1
-echo "Installing PyTorch..."
-python -m pip install torch==2.1.2+cu121 torchvision==0.16.2+cu121 --extra-index-url https://download.pytorch.org/whl/cu121
-
-# Install computer vision and evaluation packages
-echo "Installing computer vision packages..."
-python -m pip install \
-    opencv-python-headless \
-    scikit-image \
-    clean-fid \
-    lpips \
-    ultralytics \
-    pandas \
-    scipy \
-    pillow \
-    tqdm \
-    matplotlib \
-    seaborn
-
+# 5. Install NumPy 1.x FIRST (critical for compatibility)
+echo "Installing NumPy 1.x for compatibility..."
 python -m pip install "numpy<2.0"
 
-# 5. VERIFY INSTALLATION
+# 6. Install PyTorch with compatible dependencies
+echo "Installing PyTorch with CUDA 12.1..."
+python -m pip install torch==2.1.2+cu121 torchvision==0.16.2+cu121 --extra-index-url https://download.pytorch.org/whl/cu121
+
+# 7. Install other packages with version pins for stability
+echo "Installing computer vision packages..."
+python -m pip install \
+    opencv-python-headless==4.8.1.78 \
+    scikit-image==0.21.0 \
+    clean-fid==0.6.6 \
+    lpips==0.1.4 \
+    ultralytics==8.0.186 \
+    pandas==2.0.3 \
+    scipy==1.11.1 \
+    pillow==10.0.0 \
+    tqdm==4.65.0 \
+    matplotlib==3.7.1 \
+    seaborn==0.12.2
+
+# 8. VERIFY INSTALLATION WITH BETTER ERROR HANDLING
 echo "=================================================="
 echo "VERIFYING INSTALLATION"
 echo "=================================================="
@@ -56,17 +61,25 @@ echo "=================================================="
 python -c "
 import sys
 try:
+    # Test NumPy first (most critical)
+    import numpy as np
+    print(f'✓ NumPy {np.__version__}')
+    assert np.__version__.startswith('1.'), f'NumPy version {np.__version__} may cause compatibility issues'
+
     # Core ML stack
     import torch
     import torchvision
     print(f'✓ PyTorch {torch.__version__}')
     print(f'✓ Torchvision {torchvision.__version__}')
     print(f'✓ CUDA available: {torch.cuda.is_available()}')
+    if torch.cuda.is_available():
+        print(f'✓ GPU: {torch.cuda.get_device_name(0)}')
 
     # Image processing
     import cv2
     from skimage.metrics import structural_similarity as ssim
-    print('✓ OpenCV and scikit-image')
+    print(f'✓ OpenCV {cv2.__version__}')
+    print('✓ scikit-image')
 
     # Evaluation metrics
     import lpips
@@ -75,13 +88,13 @@ try:
 
     # Other essentials
     import ultralytics
-    import pandas
-    print('✓ Ultralytics and pandas')
+    import pandas as pd
+    print(f'✓ Ultralytics {ultralytics.__version__}')
+    print(f'✓ pandas {pd.__version__}')
 
     print('')
     print('🎉 ALL PACKAGES INSTALLED SUCCESSFULLY!')
-    print('You can now activate this environment with:')
-    print('  source venv/bin/activate')
+    print('Environment is ready for evaluation scripts.')
 
 except Exception as e:
     print(f'❌ ERROR: {e}')
@@ -93,6 +106,4 @@ except Exception as e:
 echo "=================================================="
 echo "SETUP COMPLETE!"
 echo "Environment location: $(pwd)/venv"
-echo "To use this environment in future jobs, add to your SLURM scripts:"
-echo "  source $(pwd)/venv/bin/activate"
 echo "=================================================="
