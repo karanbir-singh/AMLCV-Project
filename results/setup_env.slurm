@@ -36,7 +36,7 @@ python -m pip install "numpy<2.0"
 
 # 6. Install PyTorch with compatible dependencies
 echo "Installing PyTorch with CUDA 12.1..."
-python -m pip install torch==2.1.2+cu121 torchvision==0.16.2+cu121 --extra-index-url https://download.pytorch.org/whl/cu121
+python -m pip install torch==2.1.2+cu121 torchvision==0.21--extra-index-url https://download.pytorch.org/whl/cu121
 
 # 7. Install other packages with version pins for stability
 echo "Installing computer vision packages..."
@@ -51,7 +51,8 @@ python -m pip install \
     pillow==10.0.0 \
     tqdm==4.65.0 \
     matplotlib==3.7.1 \
-    seaborn==0.12.2
+    seaborn==0.12.2 \
+    torchvision==0.16
 
 # 8. VERIFY INSTALLATION WITH BETTER ERROR HANDLING
 echo "=================================================="
