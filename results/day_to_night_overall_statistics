@@ -1,0 +1,125 @@
+============================================================
+OVERALL STATISTICS
+============================================================
+
+OBJECT_CONSISTENCY
+  Mean:   0.675 ± 0.224
+  Median: 0.700
+  Q1-Q3:  0.500 - 0.833
+  Range:  0.000 - 1.000
+
+SSIM
+  Mean:   0.372 ± 0.022
+  Median: 0.372
+  Q1-Q3:  0.359 - 0.387
+  Range:  0.235 - 0.448
+
+BRIGHTNESS_REDUCTION
+  Mean:   64.098 ± 8.445
+  Median: 64.929
+  Q1-Q3:  57.903 - 70.371
+  Range:  20.877 - 86.683
+
+BLUE_SHIFT
+  Mean:   0.516 ± 1.347
+  Median: 0.650
+  Q1-Q3:  -0.103 - 1.296
+  Range:  -5.546 - 6.290
+
+SATURATION_REDUCTION
+  Mean:   -87.565 ± 19.163
+  Median: -91.131
+  Q1-Q3:  -98.098 - -83.080
+  Range:  -168.121 - 17.307
+
+EDGE_PRESERVATION
+  Mean:   0.020 ± 0.009
+  Median: 0.019
+  Q1-Q3:  0.014 - 0.025
+  Range:  0.002 - 0.096
+
+LPIPS
+  Mean:   0.513 ± 0.041
+  Median: 0.514
+  Q1-Q3:  0.486 - 0.540
+  Range:  0.366 - 0.653
+
+============================================================
+QUALITY CLASSIFICATION
+============================================================
+
+Quality Distribution:
+  Good        :  802 ( 49.4%)
+  Fair        :  718 ( 44.2%)
+  Poor        :  105 (  6.5%)
+
+============================================================
+ISSUE ANALYSIS
+============================================================
+
+Images without issues: 0 (0.0%)
+Images with issues:    1625 (100.0%)
+
+Most Common Issues:
+  Structure_degraded       : 1625 (100.0%)
+  Details_lost             : 1625 (100.0%)
+  Wrong_color_temp         :  458 ( 28.2%)
+  Lost_objects             :  282 ( 17.4%)
+
+============================================================
+METRIC CORRELATIONS
+============================================================
+
+Key Correlations:
+SSIM ↔ Edge Preservation: 0.086
+SSIM ↔ Object Consistency: 0.108
+LPIPS ↔ SSIM: -0.287
+
+============================================================
+BEST AND WORST PERFORMERS
+============================================================
+
+Top 5 Best Transformations:
+
+  darmstadt_darmstadt_000011_000019_leftImg8bit.png
+    Obj: 1.000, SSIM: 0.416, Edge: 0.023
+    Issues: Structure_degraded; Details_lost; Wrong_color_temp
+
+  erfurt_erfurt_000038_000019_leftImg8bit.png
+    Obj: 1.000, SSIM: 0.411, Edge: 0.028
+    Issues: Structure_degraded; Details_lost
+
+  erfurt_erfurt_000078_000019_leftImg8bit.png
+    Obj: 1.000, SSIM: 0.393, Edge: 0.024
+    Issues: Structure_degraded; Details_lost
+
+  aachen_aachen_000039_000019_leftImg8bit.png
+    Obj: 1.000, SSIM: 0.381, Edge: 0.035
+    Issues: Structure_degraded; Details_lost
+
+  aachen_aachen_000037_000019_leftImg8bit.png
+    Obj: 1.000, SSIM: 0.387, Edge: 0.018
+    Issues: Structure_degraded; Details_lost
+
+
+Bottom 5 Worst Transformations:
+
+  bremen_bremen_000188_000019_leftImg8bit.png
+    Obj: 0.000, SSIM: 0.364, Edge: 0.016
+    Issues: Lost_objects; Structure_degraded; Details_lost
+
+  hamburg_hamburg_000000_067587_leftImg8bit.png
+    Obj: 0.000, SSIM: 0.362, Edge: 0.012
+    Issues: Lost_objects; Structure_degraded; Details_lost
+
+  cologne_cologne_000030_000019_leftImg8bit.png
+    Obj: 0.000, SSIM: 0.356, Edge: 0.022
+    Issues: Lost_objects; Structure_degraded; Details_lost
+
+  bochum_bochum_000000_031922_leftImg8bit.png
+    Obj: 0.000, SSIM: 0.359, Edge: 0.010
+    Issues: Lost_objects; Structure_degraded; Details_lost
+
+  bremen_bremen_000191_000019_leftImg8bit.png
+    Obj: 0.000, SSIM: 0.312, Edge: 0.011
+    Issues: Lost_objects; Structure_degraded; Details_lost
