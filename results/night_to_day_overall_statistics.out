@@ -1,0 +1,201 @@
+============================================================
+OVERALL STATISTICS
+============================================================
+
+OBJECT_CONSISTENCY
+  Mean:   0.928 ± 0.133
+  Median: 1.000
+  Q1-Q3:  0.893 - 1.000
+  Range:  0.000 - 1.000
+
+OBJECT_VISIBILITY_IMPROVEMENT
+  Mean:   1.544 ± 0.851
+  Median: 1.364
+  Q1-Q3:  1.091 - 1.750
+  Range:  0.000 - 14.000
+
+SSIM
+  Mean:   0.402 ± 0.035
+  Median: 0.400
+  Q1-Q3:  0.377 - 0.426
+  Range:  0.208 - 0.506
+
+BRIGHTNESS_INCREASE
+  Mean:   62.035 ± 6.365
+  Median: 62.176
+  Q1-Q3:  57.498 - 66.634
+  Range:  37.081 - 82.763
+
+WARM_SHIFT
+  Mean:   -0.787 ± 1.749
+  Median: -0.833
+  Q1-Q3:  -1.738 - 0.126
+  Range:  -8.813 - 5.735
+
+SATURATION_INCREASE
+  Mean:   -75.295 ± 18.318
+  Median: -79.072
+  Q1-Q3:  -85.185 - -71.591
+  Range:  -109.380 - 36.840
+
+EDGE_PRESERVATION
+  Mean:   0.035 ± 0.015
+  Median: 0.033
+  Q1-Q3:  0.024 - 0.044
+  Range:  0.002 - 0.100
+
+SHADOW_REMOVAL
+  Mean:   0.000 ± 0.000
+  Median: 0.000
+  Q1-Q3:  0.000 - 0.000
+  Range:  0.000 - 0.000
+
+OVEREXPOSURE_SCORE
+  Mean:   0.667 ± 0.128
+  Median: 0.669
+  Q1-Q3:  0.565 - 0.767
+  Range:  0.288 - 1.000
+
+LPIPS
+  Mean:   0.514 ± 0.043
+  Median: 0.515
+  Q1-Q3:  0.487 - 0.542
+  Range:  0.372 - 0.688
+
+============================================================
+QUALITY CLASSIFICATION
+============================================================
+
+Total Images Evaluated: 1625
+
+Quality Distribution:
+  Good        : 1063 ( 65.4%)
+  Excellent   :  278 ( 17.1%)
+  Fair        :  273 ( 16.8%)
+  Poor        :   11 (  0.7%)
+
+============================================================
+ISSUE ANALYSIS
+============================================================
+
+Images without issues: 0 (0.0%)
+Images with issues:    1625 (100.0%)
+
+Most Common Issues:
+  Structure_degraded       : 1625 (100.0%)
+  Details_lost             : 1625 (100.0%)
+  Shadows_remain           : 1625 (100.0%)
+  Undersaturated           : 1600 ( 98.5%)
+  Wrong_color_temp         : 1177 ( 72.4%)
+  Overexposed              :  531 ( 32.7%)
+  Lost_objects             :   17 (  1.0%)
+
+============================================================
+METRIC CORRELATIONS
+============================================================
+
+Key Correlations:
+SSIM ↔ Edge Preservation: 0.443
+SSIM ↔ Object Consistency: 0.086
+Object Visibility ↔ Object Consistency: 0.228
+Brightness Increase ↔ Overexposure: 0.034
+Warm Shift ↔ Saturation: 0.671
+LPIPS ↔ SSIM: -0.512
+
+============================================================
+COMPREHENSIVE KEY FINDINGS:
+============================================================
+
+1. OBJECT CONSISTENCY: 0.928 ± 0.133
+   - 1206 images (74.2%) achieved excellent consistency (≥0.9)
+   - 102 images (6.3%) lost significant objects (<0.7)
+
+2. OBJECT VISIBILITY IMPROVEMENT: 1.544 ± 0.851
+   - 316 images (19.4%) achieved excellent visibility improvement (≥2.0)
+   - 701 images (43.1%) achieved good visibility improvement (≥1.5)
+
+3. STRUCTURAL SIMILARITY (SSIM): 0.402 ± 0.035
+   - Average preservation indicates good structural consistency
+   - 87 images (5.4%) show significant structural changes
+
+4. BRIGHTNESS INCREASE: 62.0 ± 6.4
+   - Optimal range (50-75): 1563 images (96.2%)
+   - Acceptable range (40-85): 1623 images (99.9%)
+
+5. COLOR TEMPERATURE (WARM SHIFT): -0.787 ± 1.749
+   - Optimal range (-2.0 to 0.5): 1004 images (61.8%)
+
+6. EDGE PRESERVATION: 0.035 ± 0.015
+   - 534 images (32.9%) preserved fine details excellently
+   - 970 images (59.7%) preserved fine details well
+
+7. OVEREXPOSURE CONTROL: 0.667 ± 0.128
+   - 688 images (42.3%) maintained excellent exposure balance
+   - 1094 images (67.3%) maintained good exposure balance
+
+8. SATURATION HANDLING: -75.3 ± 18.3
+   - Optimal range (-70 to -40): 267 images (16.4%)
+
+9. PERCEPTUAL QUALITY (LPIPS): 0.514 ± 0.043
+   - Lower values indicate better perceptual quality
+   - 590 images (36.3%) achieved good perceptual similarity (<0.5)
+
+============================================================
+MOST COMMON ISSUES:
+============================================================
+
+  Structure_degraded: 1625 images (100.0%)
+  Details_lost: 1625 images (100.0%)
+  Shadows_remain: 1625 images (100.0%)
+  Undersaturated: 1600 images (98.5%)
+  Wrong_color_temp: 1177 images (72.4%)
+  Overexposed: 531 images (32.7%)
+  Lost_objects: 17 images (1.0%)
+
+============================================================
+BEST AND WORST PERFORMERS
+============================================================
+
+Top 5 Best Transformations:
+
+  darmstadt_darmstadt_000026_000019_leftImg8bit.png
+    Obj: 1.000, Vis: 14.000, SSIM: 0.432, Edge: 0.042, Overexp: 0.533
+    Issues: Structure_degraded; Details_lost; Undersaturated; Overexposed; Shadows_remain
+
+  aachen_aachen_000101_000019_leftImg8bit.png
+    Obj: 1.000, Vis: 13.000, SSIM: 0.366, Edge: 0.021, Overexp: 0.638
+    Issues: Structure_degraded; Details_lost; Wrong_color_temp; Undersaturated; Shadows_remain
+
+  dusseldorf_dusseldorf_000152_000019_leftImg8bit.png
+    Obj: 1.000, Vis: 9.000, SSIM: 0.363, Edge: 0.019, Overexp: 0.839
+    Issues: Structure_degraded; Details_lost; Undersaturated; Shadows_remain
+
+  aachen_aachen_000006_000019_leftImg8bit.png
+    Obj: 1.000, Vis: 8.000, SSIM: 0.374, Edge: 0.033, Overexp: 0.503
+    Issues: Structure_degraded; Details_lost; Wrong_color_temp; Undersaturated; Overexposed; Shadows_remain
+
+  dusseldorf_dusseldorf_000038_000019_leftImg8bit.png
+    Obj: 1.000, Vis: 7.000, SSIM: 0.357, Edge: 0.022, Overexp: 0.764
+    Issues: Structure_degraded; Details_lost; Wrong_color_temp; Undersaturated; Shadows_remain
+
+Bottom 5 Worst Transformations:
+
+  aachen_aachen_000159_000019_leftImg8bit.png
+    Obj: 0.000, Vis: 0.000, SSIM: 0.360, Edge: 0.011, Overexp: 0.699
+    Issues: Lost_objects; Structure_degraded; Details_lost; Wrong_color_temp; Undersaturated; Shadows_remain
+
+  jena_jena_000002_000019_leftImg8bit.png
+    Obj: 0.000, Vis: 0.000, SSIM: 0.376, Edge: 0.015, Overexp: 0.704
+    Issues: Lost_objects; Structure_degraded; Details_lost; Wrong_color_temp; Undersaturated; Shadows_remain
+
+  erfurt_erfurt_000033_000019_leftImg8bit.png
+    Obj: 0.000, Vis: 0.000, SSIM: 0.384, Edge: 0.017, Overexp: 0.781
+    Issues: Lost_objects; Structure_degraded; Details_lost; Wrong_color_temp; Undersaturated; Shadows_remain
+
+  bremen_bremen_000162_000019_leftImg8bit.png
+    Obj: 0.333, Vis: 0.333, SSIM: 0.344, Edge: 0.020, Overexp: 0.779
+    Issues: Lost_objects; Structure_degraded; Details_lost; Wrong_color_temp; Undersaturated; Shadows_remain
+
+  cologne_cologne_000131_000019_leftImg8bit.png
+    Obj: 0.250, Vis: 0.250, SSIM: 0.402, Edge: 0.045, Overexp: 0.654
+    Issues: Lost_objects; Structure_degraded; Details_lost; Wrong_color_temp; Undersaturated; Shadows_remain
