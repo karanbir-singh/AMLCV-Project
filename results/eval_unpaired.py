@@ -22,6 +22,77 @@ lpips_fn = lpips.LPIPS(net='alex').cuda() if torch.cuda.is_available() else lpip
 yolo_model = YOLO('yolov8n.pt')
 
 
+def get_all_image_files(directory):
+    """Get all image files from directory"""
+    return sorted([f for f in os.listdir(directory)
+                   if f.lower().endswith(('.png', '.jpg', '.jpeg'))])
+
+
+def create_filename_mapping():
+    """
+    Create a mapping between night and day filenames.
+    Since they have different names, we'll match them by:
+    1. Same numeric patterns
+    2. Same city names
+    3. Same sequence
+    """
+    night_files = get_all_image_files(NIGHT_PATH)
+    day_files = get_all_image_files(DAY_PATH)
+
+    print(f"Found {len(night_files)} night files and {len(day_files)} day files")
+
+    # If counts match, assume they're in the same order
+    if len(night_files) == len(day_files):
+        print("✓ File counts match - using sequential pairing")
+        return list(zip(night_files, day_files))
+
+    # Otherwise, try to match by numeric patterns
+    mapping = []
+    used_day_files = set()
+
+    for night_file in night_files:
+        best_match = None
+        best_score = 0
+
+        # Extract numeric parts from night filename
+        night_parts = night_file.split('_')
+        night_nums = [p for p in night_parts if p.isdigit()]
+
+        for day_file in day_files:
+            if day_file in used_day_files:
+                continue
+
+            # Extract numeric parts from day filename
+            day_parts = day_file.split('_')
+            day_nums = [p for p in day_parts if p.isdigit()]
+
+            # Calculate matching score
+            score = 0
+            if night_nums and day_nums:
+                # Check if any numbers match
+                common_nums = set(night_nums) & set(day_nums)
+                score = len(common_nums)
+
+            # Also check city name
+            night_city = night_parts[0] if night_parts else ""
+            day_city = day_parts[0] if day_parts else ""
+            if night_city and day_city and night_city in day_city or day_city in night_city:
+                score += 1
+
+            if score > best_score:
+                best_score = score
+                best_match = day_file
+
+        if best_match and best_score > 0:
+            mapping.append((night_file, best_match))
+            used_day_files.add(best_match)
+            print(f"  Matched: {night_file} → {best_match} (score: {best_score})")
+        else:
+            print(f"  ❌ No match found for: {night_file}")
+
+    return mapping
+
+
 def load_image_tensor(path):
     """Load image for LPIPS (Tensor, -1 to 1 normalized)"""
     img = Image.open(path).convert('RGB')
@@ -33,11 +104,11 @@ def load_image_tensor(path):
     return tf(img).unsqueeze(0)
 
 
+
+#   Returns object consistency score (0.0 to 1.0).
+#   Measures how many day objects are preserved in night image.
 def calculate_object_consistency(img_day_path, img_night_path):
-    """
-    Returns object consistency score (0.0 to 1.0).
-    Measures how many day objects are preserved in night image.
-    """
+
     res_day = yolo_model(img_day_path, verbose=False)[0]
     res_night = yolo_model(img_night_path, verbose=False)[0]
 
@@ -83,8 +154,9 @@ def calculate_object_consistency(img_day_path, img_night_path):
     return matched_count / len(boxes_day)
 
 
+
+# Calculate structural similarity (geometry preservation)
 def calculate_ssim_score(img_day, img_night):
-    """Calculate structural similarity (geometry preservation)"""
     gray_day = cv2.cvtColor(img_day, cv2.COLOR_BGR2GRAY)
     gray_night = cv2.cvtColor(img_night, cv2.COLOR_BGR2GRAY)
 
@@ -94,9 +166,13 @@ def calculate_ssim_score(img_day, img_night):
     return ssim(gray_day, gray_night)
 
 
-def calculate_night_characteristics(img_day, img_night):
-    """Analyze if image has proper night characteristics"""
 
+# Analyze if image has proper night characteristics
+# Converts the images into the LAB and HSV color spaces:
+# 1. Brightness Reduction: Calculates the difference in the mean of the L-channel (Lightness/Luminance) between Day and Night.
+# 2. Blue Shift: Calculates the difference in the mean of the B-channel (Blue-Yellow axis) between Day and Night.
+# 3. Saturation Reduction: Calculates the difference in the mean of the S-channel (Saturation) between Day and Night.
+def calculate_night_characteristics(img_day, img_night):
     # LAB color space
     lab_day = cv2.cvtColor(img_day, cv2.COLOR_BGR2LAB)
     lab_night = cv2.cvtColor(img_night, cv2.COLOR_BGR2LAB)
