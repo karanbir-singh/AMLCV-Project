@@ -23,19 +23,11 @@ yolo_model = YOLO('yolov8n.pt')
 
 
 def get_all_image_files(directory):
-    """Get all image files from directory"""
     return sorted([f for f in os.listdir(directory)
                    if f.lower().endswith(('.png', '.jpg', '.jpeg'))])
 
 
 def create_filename_mapping():
-    """
-    Create a mapping between night and day filenames.
-    Since they have different names, we'll match them by:
-    1. Same numeric patterns
-    2. Same city names
-    3. Same sequence
-    """
     night_files = get_all_image_files(NIGHT_PATH)
     day_files = get_all_image_files(DAY_PATH)
 
@@ -43,7 +35,7 @@ def create_filename_mapping():
 
     # If counts match, assume they're in the same order
     if len(night_files) == len(day_files):
-        print("✓ File counts match - using sequential pairing")
+        print("File counts match - using sequential pairing")
         return list(zip(night_files, day_files))
 
     # Otherwise, try to match by numeric patterns
@@ -54,7 +46,6 @@ def create_filename_mapping():
         best_match = None
         best_score = 0
 
-        # Extract numeric parts from night filename
         night_parts = night_file.split('_')
         night_nums = [p for p in night_parts if p.isdigit()]
 
@@ -88,7 +79,7 @@ def create_filename_mapping():
             used_day_files.add(best_match)
             print(f"  Matched: {night_file} → {best_match} (score: {best_score})")
         else:
-            print(f"  ❌ No match found for: {night_file}")
+            print(f"  No match found for: {night_file}")
 
     return mapping
 
@@ -317,7 +308,7 @@ def main():
 
     # Save detailed results
     df.to_csv(OUTPUT_CSV, index=False)
-    print(f"\n✓ Detailed results saved to {OUTPUT_CSV}")
+    print(f"\nDetailed results saved to {OUTPUT_CSV}")
 
     # Calculate and save summary statistics
     numeric_cols = ['object_consistency', 'ssim', 'brightness_reduction',
